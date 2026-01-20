@@ -161,13 +161,59 @@
         .loading {
             text-align: center;
             color: white;
-            font-size: 1.3rem;
-            padding: 20px;
+            padding: 40px 20px;
             display: none;
         }
 
         .loading.active {
             display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #16a085;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .loading-dots {
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+        }
+
+        .loading-dots span {
+            animation: blink 1.4s infinite;
+            animation-fill-mode: both;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 80%, 100% {
+                opacity: 0;
+            }
+            40% {
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -183,7 +229,7 @@
 </head>
 <body>
     <div class="container">
-        <button class="back-button" onclick="window.location.href='https://shakilxvs.github.io/tools/">← Back to Tools</button>
+        <button class="back-button" onclick="window.location.href='https://shakilxvs.github.io/tools/'">← Back to Tools</button>
         
         <h1>CMS DETECT</h1>
 
@@ -199,7 +245,13 @@
 
         <button class="detect-button" id="detectBtn">DETECT CMS</button>
 
-        <div class="loading" id="loading">🔍 Analyzing website...</div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Analyzing website</div>
+            <div class="loading-dots">
+                <span>.</span><span>.</span><span>.</span>
+            </div>
+        </div>
 
         <div class="result-container" id="resultContainer">
             <div class="result-title">Detection Results</div>
