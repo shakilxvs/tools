@@ -1,0 +1,249 @@
+╔═══════════════════════════════════════════════════════════╗
+║           XVS TOOLS - QUICK SETUP GUIDE                   ║
+║         Multi-Platform Downloader + More Tools            ║
+╚═══════════════════════════════════════════════════════════╝
+
+📦 WHAT YOU HAVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ index.html           - Main page (lists all tools)
+✓ config.js            - Tool configuration (add tools here!)
+✓ README.md            - Full documentation
+✓ tools/
+  ✓ downloader.html    - Multi-platform downloader (15+ sites)
+  ✓ cms-detect.html    - Website CMS detector
+  ✓ tool-template.html - Template for new tools
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🚀 SETUP IN 3 STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Create GitHub Repository
+─────────────────────────────────
+1. Go to: github.com
+2. Login to your account
+3. Click "+" icon (top right) → "New repository"
+4. Settings:
+   - Name: xvs-tools (or any name)
+   - PUBLIC (must be public for GitHub Pages)
+   - DON'T check "Add README"
+5. Click "Create repository"
+
+
+STEP 2: Upload Your Files
+─────────────────────────────────
+Option A - Web Upload (Easiest):
+
+1. On your new repo page, click "uploading an existing file"
+2. Upload to ROOT (drag & drop):
+   • index.html
+   • config.js
+   • README.md
+3. Click "Commit changes"
+
+4. Create tools folder:
+   • Click "Add file" → "Create new file"
+   • In the name box, type: tools/downloader.html
+   • Copy-paste the downloader.html code
+   • Click "Commit"
+
+5. Repeat step 4 for:
+   • tools/cms-detect.html
+   • tools/tool-template.html
+
+
+Option B - Git Command Line:
+
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR-USERNAME/xvs-tools.git
+git push -u origin main
+
+
+STEP 3: Enable GitHub Pages
+─────────────────────────────────
+1. Go to your repository
+2. Click "Settings" tab
+3. Scroll to "Pages" (left sidebar)
+4. Under "Source":
+   → Branch: main
+   → Folder: / (root)
+5. Click "Save"
+6. WAIT 2-3 minutes for deployment
+
+🎉 DONE! Your site is live at:
+   https://YOUR-USERNAME.github.io/xvs-tools/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+✅ VERIFY IT'S WORKING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your repository should look like:
+
+xvs-tools/
+├── index.html              ✓
+├── config.js               ✓
+├── README.md               ✓
+└── tools/
+    ├── downloader.html     ✓
+    ├── cms-detect.html     ✓
+    └── tool-template.html  ✓
+
+Test Your Site:
+1. Visit: https://YOUR-USERNAME.github.io/xvs-tools/
+2. You should see: "Tools by @shakilxvs"
+3. Two buttons: DOWNLOADER, CMS DETECT
+4. Click DOWNLOADER → should open downloader page
+5. Click CMS DETECT → should open detector page
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🎨 QUICK CUSTOMIZATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Change Your Name:
+─────────────────────────────────
+1. Edit index.html
+2. Find line: <h1>Tools by @shakilxvs</h1>
+3. Change to: <h1>Tools by @YourName</h1>
+4. Commit changes
+
+
+Add New Tool:
+─────────────────────────────────
+1. Copy tools/tool-template.html
+2. Rename to: tools/your-tool.html
+3. Edit config.js:
+
+   const TOOLS = [
+     {
+       name: 'DOWNLOADER',
+       file: 'tools/downloader.html'
+     },
+     {
+       name: 'CMS DETECT',
+       file: 'tools/cms-detect.html'
+     },
+     {
+       name: 'YOUR TOOL',              ← Add this
+       file: 'tools/your-tool.html'    ← Your file
+     }
+   ];
+
+4. Commit changes
+5. Your tool appears automatically!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📖 HOW TO USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DOWNLOADER:
+1. Open downloader tool
+2. Paste video URL (YouTube, Instagram, TikTok, etc.)
+3. Platform auto-detects (or select manually)
+4. Click DOWNLOAD
+5. Opens in new tab → browser downloads automatically
+
+Supported Platforms (15+):
+• YouTube    • Instagram   • TikTok      • Facebook
+• Twitter    • Pinterest   • Vimeo       • Reddit
+• SoundCloud • Spotify     • Twitch      • Dailymotion
+• Tumblr     • Imgur       • Streamable
+
+
+CMS DETECT:
+1. Open CMS detect tool
+2. Enter website URL
+3. Click DETECT CMS
+4. See results: CMS type, version, technologies
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🔧 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problem: Page shows 404
+Solution: 
+  • Wait 2-3 minutes after enabling Pages
+  • Check Settings → Pages for deployment status
+  • Ensure branch is "main" not "master"
+
+Problem: Tools not appearing
+Solution:
+  • Check config.js syntax (must be valid JavaScript)
+  • Open browser console (F12) to see errors
+  • Verify file paths are correct
+
+Problem: Download not working
+Solution:
+  • Allow pop-ups in browser settings
+  • Some platforms require login
+  • Works by opening URL in new tab
+
+Problem: Styling broken
+Solution:
+  • Clear browser cache (Ctrl + Shift + R)
+  • Check all files uploaded correctly
+  • Verify folder structure matches above
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+⚠️  IMPORTANT NOTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LEGAL:
+  This tool is for EDUCATIONAL purposes only.
+  
+  Downloading copyrighted content without permission
+  may violate:
+  • Platform Terms of Service
+  • Copyright laws in your country
+  • DMCA regulations
+  
+  Always ensure you have rights to download content!
+
+
+TECHNICAL:
+  • No backend/API - works in browser only
+  • Opens URLs for browser to download
+  • Some platforms may block direct downloads
+  • For production, implement proper backend
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📚 NEED MORE HELP?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Read README.md for detailed documentation
+2. Check browser console (F12) for errors
+3. Test files locally (open index.html in browser)
+4. Verify all files uploaded correctly
+5. Ask for help on GitHub Discussions
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🎉 YOU'RE ALL SET!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your XVS Tools is now live at:
+https://YOUR-USERNAME.github.io/xvs-tools/
+
+Share it, customize it, enjoy it! 🚀
+
+Made with ❤️ for education
+Use responsibly! 🦸‍♂️
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
