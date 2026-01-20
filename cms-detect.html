@@ -236,7 +236,206 @@
         const loading = document.getElementById('loading');
         const resultContainer = document.getElementById('resultContainer');
 
-        // Normalize URL
+        // CMS Detection Patterns
+        const CMS_PATTERNS = {
+            WordPress: {
+                patterns: [
+                    /wp-content/i,
+                    /wp-includes/i,
+                    /wp-json/i,
+                    /<meta name="generator" content="WordPress/i,
+                    /\/wp-admin\//i,
+                    /\/wp-login\.php/i
+                ],
+                versionPattern: /WordPress[\/\s]+(\d+\.\d+(?:\.\d+)?)/i,
+                confidence: 95,
+                tech: ['PHP', 'MySQL']
+            },
+            Shopify: {
+                patterns: [
+                    /cdn\.shopify\.com/i,
+                    /myshopify\.com/i,
+                    /Shopify\.theme/i,
+                    /shopify-section/i,
+                    /"Shopify":/i,
+                    /\/s\/files\/\d+\/\d+\/\d+\/shopify/i,
+                    /Shopify\.cdnHost/i,
+                    /shopifycdn\.com/i
+                ],
+                versionPattern: null,
+                confidence: 98,
+                tech: ['Ruby on Rails', 'Liquid', 'JavaScript']
+            },
+            Wix: {
+                patterns: [
+                    /static\.wixstatic\.com/i,
+                    /parastorage\.com/i,
+                    /wix\.com/i,
+                    /_wix_/i,
+                    /wixpress\.com/i
+                ],
+                versionPattern: null,
+                confidence: 95,
+                tech: ['React', 'Node.js', 'JavaScript']
+            },
+            Squarespace: {
+                patterns: [
+                    /static1\.squarespace\.com/i,
+                    /squarespace\.com/i,
+                    /squarespace-cdn\.com/i,
+                    /"Squarespace"/i
+                ],
+                versionPattern: null,
+                confidence: 95,
+                tech: ['JavaScript', 'Node.js']
+            },
+            Joomla: {
+                patterns: [
+                    /\/components\/com_/i,
+                    /\/media\/jui\//i,
+                    /<meta name="generator" content="Joomla/i,
+                    /option=com_/i,
+                    /\/administrator\/index\.php/i
+                ],
+                versionPattern: /Joomla[!\/\s]+(\d+\.\d+(?:\.\d+)?)/i,
+                confidence: 90,
+                tech: ['PHP', 'MySQL']
+            },
+            Drupal: {
+                patterns: [
+                    /\/sites\/default\/files/i,
+                    /\/misc\/drupal/i,
+                    /<meta name="generator" content="Drupal/i,
+                    /Drupal\.settings/i,
+                    /\/node\/\d+/i
+                ],
+                versionPattern: /Drupal[\/\s]+(\d+)/i,
+                confidence: 90,
+                tech: ['PHP', 'MySQL']
+            },
+            Magento: {
+                patterns: [
+                    /\/static\/version\d+/i,
+                    /mage\/cookies/i,
+                    /Magento/i,
+                    /\/skin\/frontend\//i,
+                    /Magento_/i
+                ],
+                versionPattern: /Magento[\/\s]+(\d+\.\d+)/i,
+                confidence: 90,
+                tech: ['PHP', 'MySQL', 'Zend Framework']
+            },
+            PrestaShop: {
+                patterns: [
+                    /prestashop/i,
+                    /\/modules\/\w+\//i,
+                    /\/themes\/\w+\//i,
+                    /prestashop\.com/i
+                ],
+                versionPattern: /PrestaShop[\/\s]+(\d+\.\d+)/i,
+                confidence: 90,
+                tech: ['PHP', 'MySQL', 'Smarty']
+            },
+            Webflow: {
+                patterns: [
+                    /webflow/i,
+                    /assets\.website-files\.com/i,
+                    /"wf-"/i,
+                    /webflow\.com/i
+                ],
+                versionPattern: null,
+                confidence: 90,
+                tech: ['HTML5', 'CSS3', 'JavaScript']
+            },
+            BigCommerce: {
+                patterns: [
+                    /bigcommerce\.com/i,
+                    /cdn\d+\.bigcommerce\.com/i,
+                    /"BigCommerce"/i
+                ],
+                versionPattern: null,
+                confidence: 90,
+                tech: ['PHP', 'JavaScript']
+            },
+            Ghost: {
+                patterns: [
+                    /ghost/i,
+                    /\/ghost\//i,
+                    /content\/themes/i,
+                    /<meta name="generator" content="Ghost/i
+                ],
+                versionPattern: /Ghost[\/\s]+(\d+\.\d+)/i,
+                confidence: 85,
+                tech: ['Node.js', 'Handlebars', 'JavaScript']
+            },
+            Blogger: {
+                patterns: [
+                    /blogspot\.com/i,
+                    /blogger\.com/i,
+                    /"Blogger"/i
+                ],
+                versionPattern: null,
+                confidence: 95,
+                tech: ['Google Infrastructure']
+            },
+            Weebly: {
+                patterns: [
+                    /weebly\.com/i,
+                    /editmysite\.com/i,
+                    /"Weebly"/i
+                ],
+                versionPattern: null,
+                confidence: 90,
+                tech: ['JavaScript']
+            },
+            WooCommerce: {
+                patterns: [
+                    /woocommerce/i,
+                    /\/woocommerce\//i,
+                    /wc-/i
+                ],
+                versionPattern: /WooCommerce[\/\s]+(\d+\.\d+)/i,
+                confidence: 85,
+                tech: ['WordPress', 'PHP', 'MySQL']
+            },
+            Elementor: {
+                patterns: [
+                    /elementor/i,
+                    /\/elementor\//i
+                ],
+                versionPattern: /Elementor[\/\s]+(\d+\.\d+)/i,
+                confidence: 80,
+                tech: ['WordPress', 'PHP']
+            }
+        };
+
+        // Technology detection patterns
+        const TECH_PATTERNS = {
+            'jQuery': /jquery/i,
+            'React': /react/i,
+            'Angular': /angular/i,
+            'Vue.js': /vue\.js|vuejs/i,
+            'Bootstrap': /bootstrap/i,
+            'Tailwind CSS': /tailwind/i,
+            'Google Analytics': /google-analytics|gtag|ga\.js/i,
+            'Google Tag Manager': /googletagmanager/i,
+            'Cloudflare': /cloudflare|__cfduid/i,
+            'Font Awesome': /font-awesome|fontawesome/i,
+            'Stripe': /stripe/i,
+            'PayPal': /paypal/i,
+            'Hotjar': /hotjar/i,
+            'Intercom': /intercom/i,
+            'Disqus': /disqus/i,
+            'AddThis': /addthis/i,
+            'Nginx': /nginx/i,
+            'Apache': /apache/i,
+            'PHP': /\.php|x-powered-by.*php/i,
+            'Node.js': /node\.js|nodejs/i,
+            'Next.js': /next\.js|_next/i,
+            'Gatsby': /gatsby/i,
+            'Nuxt.js': /nuxt/i
+        };
+
         function normalizeUrl(url) {
             url = url.trim();
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -245,242 +444,110 @@
             return url;
         }
 
-        // Detect CMS using Wappalyzer API
-        async function detectCMS(url) {
-            try {
-                // Using whatcms.org API (free tier available)
-                const apiUrl = `https://whatcms.org/API/Tech?key=demo&url=${encodeURIComponent(url)}`;
-                
-                const response = await fetch(apiUrl);
-                
-                if (!response.ok) {
-                    throw new Error('API request failed');
+        async function fetchWebsiteContent(url) {
+            // Try multiple CORS proxies in sequence
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+                `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`
+            ];
+
+            let lastError = null;
+
+            for (let i = 0; i < proxies.length; i++) {
+                try {
+                    const response = await fetch(proxies[i], {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'text/html,application/xhtml+xml,application/xml',
+                        },
+                        signal: AbortSignal.timeout(10000) // 10 second timeout
+                    });
+
+                    if (response.ok) {
+                        const html = await response.text();
+                        if (html && html.length > 100) {
+                            return html;
+                        }
+                    }
+                } catch (error) {
+                    lastError = error;
+                    console.log(`Proxy ${i + 1}/${proxies.length} failed, trying next...`);
+                    continue;
                 }
-                
-                const data = await response.json();
-                return parseWhatCMSResponse(data);
-                
-            } catch (error) {
-                console.error('Detection error:', error);
-                // Fallback to alternative method
-                return await detectCMSFallback(url);
             }
+
+            throw lastError || new Error('All proxies failed');
         }
 
-        // Parse WhatCMS API response
-        function parseWhatCMSResponse(data) {
-            const result = {
-                cms: 'Unknown',
-                version: 'N/A',
-                confidence: '0%',
-                technologies: []
+        function detectCMS(html) {
+            let detectedCMS = null;
+            let highestConfidence = 0;
+            let version = 'N/A';
+            const technologies = new Set();
+
+            // Detect CMS
+            for (const [cmsName, config] of Object.entries(CMS_PATTERNS)) {
+                let matches = 0;
+                
+                for (const pattern of config.patterns) {
+                    if (pattern.test(html)) {
+                        matches++;
+                    }
+                }
+
+                const matchRatio = matches / config.patterns.length;
+                const confidence = Math.round(matchRatio * config.confidence);
+
+                if (matches > 0 && confidence > highestConfidence) {
+                    highestConfidence = confidence;
+                    detectedCMS = cmsName;
+                    
+                    // Try to detect version
+                    if (config.versionPattern) {
+                        const versionMatch = html.match(config.versionPattern);
+                        if (versionMatch && versionMatch[1]) {
+                            version = versionMatch[1];
+                        }
+                    }
+
+                    // Add CMS-specific technologies
+                    config.tech.forEach(tech => technologies.add(tech));
+                }
+            }
+
+            // Detect additional technologies
+            for (const [tech, pattern] of Object.entries(TECH_PATTERNS)) {
+                if (pattern.test(html)) {
+                    technologies.add(tech);
+                }
+            }
+
+            return {
+                cms: detectedCMS || 'Unknown',
+                version: version,
+                confidence: highestConfidence > 0 ? `${highestConfidence}%` : '0%',
+                technologies: Array.from(technologies).slice(0, 12)
             };
-
-            if (data.result && data.result.name) {
-                result.cms = data.result.name;
-                result.confidence = '95%';
-                
-                if (data.result.version) {
-                    result.version = data.result.version;
-                }
-            }
-
-            // Extract technologies
-            if (data.results && Array.isArray(data.results)) {
-                result.technologies = data.results
-                    .map(tech => tech.name)
-                    .filter(name => name && name !== result.cms)
-                    .slice(0, 8);
-            }
-
-            return result;
         }
 
-        // Fallback detection method using alternative API
-        async function detectCMSFallback(url) {
+        async function performDetection(url) {
             try {
-                // Try alternative: using a CORS proxy with Wappalyzer-like detection
-                const apiUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                const response = await fetch(apiUrl);
-                const html = await response.text();
-                
-                return analyzeHTML(html, url);
-                
-            } catch (error) {
-                console.error('Fallback detection error:', error);
-                return {
-                    cms: 'Detection Failed',
-                    version: 'N/A',
-                    confidence: '0%',
-                    technologies: ['Unable to analyze - CORS restrictions or network error']
-                };
-            }
-        }
+                loading.classList.add('active');
+                resultContainer.classList.remove('active');
 
-        // Analyze HTML for CMS signatures
-        function analyzeHTML(html, url) {
-            const result = {
-                cms: 'Unknown',
-                version: 'N/A',
-                confidence: '0%',
-                technologies: []
-            };
+                const html = await fetchWebsiteContent(url);
+                const result = detectCMS(html);
 
-            const htmlLower = html.toLowerCase();
-            let detectionScore = 0;
-            const detectedTechs = new Set();
-
-            // WordPress Detection
-            if (htmlLower.includes('wp-content') || 
-                htmlLower.includes('wp-includes') || 
-                htmlLower.includes('wordpress')) {
-                result.cms = 'WordPress';
-                detectionScore = 95;
-                
-                // Try to detect version
-                const versionMatch = html.match(/wordpress[\/\s]+(\d+\.\d+(?:\.\d+)?)/i);
-                if (versionMatch) {
-                    result.version = versionMatch[1];
-                }
-                
-                detectedTechs.add('PHP');
-                detectedTechs.add('MySQL');
-            }
-
-            // Joomla Detection
-            if (htmlLower.includes('joomla') || 
-                htmlLower.includes('/components/com_') || 
-                htmlLower.includes('option=com_')) {
-                result.cms = 'Joomla';
-                detectionScore = 90;
-                detectedTechs.add('PHP');
-                detectedTechs.add('MySQL');
-            }
-
-            // Drupal Detection
-            if (htmlLower.includes('drupal') || 
-                htmlLower.includes('sites/default/files') || 
-                htmlLower.includes('/misc/drupal')) {
-                result.cms = 'Drupal';
-                detectionScore = 90;
-                detectedTechs.add('PHP');
-                detectedTechs.add('MySQL');
-            }
-
-            // Shopify Detection
-            if (htmlLower.includes('shopify') || 
-                htmlLower.includes('cdn.shopify.com') ||
-                htmlLower.includes('myshopify.com')) {
-                result.cms = 'Shopify';
-                detectionScore = 95;
-                detectedTechs.add('Ruby on Rails');
-                detectedTechs.add('Liquid');
-            }
-
-            // Wix Detection
-            if (htmlLower.includes('wix.com') || 
-                htmlLower.includes('_wix')) {
-                result.cms = 'Wix';
-                detectionScore = 95;
-                detectedTechs.add('React');
-                detectedTechs.add('Node.js');
-            }
-
-            // Squarespace Detection
-            if (htmlLower.includes('squarespace') || 
-                htmlLower.includes('static.squarespace.com')) {
-                result.cms = 'Squarespace';
-                detectionScore = 95;
-                detectedTechs.add('JavaScript');
-            }
-
-            // Magento Detection
-            if (htmlLower.includes('magento') || 
-                htmlLower.includes('mage/cookies')) {
-                result.cms = 'Magento';
-                detectionScore = 90;
-                detectedTechs.add('PHP');
-                detectedTechs.add('MySQL');
-                detectedTechs.add('Zend Framework');
-            }
-
-            // Ghost Detection
-            if (htmlLower.includes('ghost') && htmlLower.includes('content/themes')) {
-                result.cms = 'Ghost';
-                detectionScore = 85;
-                detectedTechs.add('Node.js');
-                detectedTechs.add('Handlebars');
-            }
-
-            // Webflow Detection
-            if (htmlLower.includes('webflow')) {
-                result.cms = 'Webflow';
-                detectionScore = 90;
-                detectedTechs.add('HTML5');
-                detectedTechs.add('CSS3');
-            }
-
-            // PrestaShop Detection
-            if (htmlLower.includes('prestashop')) {
-                result.cms = 'PrestaShop';
-                detectionScore = 90;
-                detectedTechs.add('PHP');
-                detectedTechs.add('MySQL');
-            }
-
-            // Technology Detection
-            if (htmlLower.includes('jquery')) detectedTechs.add('jQuery');
-            if (htmlLower.includes('react')) detectedTechs.add('React');
-            if (htmlLower.includes('angular')) detectedTechs.add('Angular');
-            if (htmlLower.includes('vue')) detectedTechs.add('Vue.js');
-            if (htmlLower.includes('bootstrap')) detectedTechs.add('Bootstrap');
-            if (htmlLower.includes('cloudflare')) detectedTechs.add('Cloudflare');
-            if (htmlLower.includes('google-analytics') || htmlLower.includes('gtag')) {
-                detectedTechs.add('Google Analytics');
-            }
-
-            // Server detection from URL patterns
-            if (html.includes('X-Powered-By: PHP')) detectedTechs.add('PHP');
-            if (html.includes('Server: Apache')) detectedTechs.add('Apache');
-            if (html.includes('Server: nginx')) detectedTechs.add('Nginx');
-
-            result.confidence = detectionScore > 0 ? `${detectionScore}%` : '0%';
-            result.technologies = Array.from(detectedTechs).slice(0, 10);
-
-            return result;
-        }
-
-        // Main detection function
-        detectBtn.addEventListener('click', async () => {
-            const url = urlInput.value.trim();
-            
-            if (!url) {
-                alert('Please enter a website URL!');
-                return;
-            }
-
-            const normalizedUrl = normalizeUrl(url);
-
-            try {
-                new URL(normalizedUrl);
-            } catch (e) {
-                alert('Please enter a valid URL!');
-                return;
-            }
-
-            loading.classList.add('active');
-            resultContainer.classList.remove('active');
-
-            try {
-                const result = await detectCMS(normalizedUrl);
-
+                // Update UI
                 document.getElementById('cmsName').textContent = result.cms;
                 document.getElementById('cmsVersion').textContent = result.version;
                 document.getElementById('confidence').textContent = result.confidence;
 
                 const techList = document.getElementById('techList');
                 techList.innerHTML = '';
-                
+
                 if (result.technologies.length > 0) {
                     result.technologies.forEach(tech => {
                         const tag = document.createElement('div');
@@ -500,9 +567,42 @@
 
             } catch (error) {
                 loading.classList.remove('active');
-                alert('Error detecting CMS. Please check the URL and try again.');
-                console.error(error);
+                console.error('Detection error:', error);
+                
+                // Show error in results
+                document.getElementById('cmsName').textContent = 'Detection Failed';
+                document.getElementById('cmsVersion').textContent = 'N/A';
+                document.getElementById('confidence').textContent = '0%';
+                
+                const techList = document.getElementById('techList');
+                techList.innerHTML = '';
+                const tag = document.createElement('div');
+                tag.className = 'tech-tag';
+                tag.textContent = 'Unable to analyze - Site may block automated requests';
+                techList.appendChild(tag);
+                
+                resultContainer.classList.add('active');
             }
+        }
+
+        detectBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                alert('Please enter a website URL!');
+                return;
+            }
+
+            const normalizedUrl = normalizeUrl(url);
+
+            try {
+                new URL(normalizedUrl);
+            } catch (e) {
+                alert('Please enter a valid URL!');
+                return;
+            }
+
+            await performDetection(normalizedUrl);
         });
 
         urlInput.addEventListener('keypress', (e) => {
