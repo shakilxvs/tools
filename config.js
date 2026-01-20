@@ -7,11 +7,11 @@
 const TOOLS = [
   {
     name: 'DOWNLOADER',
-    file: 'tools/downloader.html'
+    file: 'downloader.html'
   },
   {
     name: 'CMS DETECT',
-    file: 'tools/cms-detect.html'
+    file: 'cms-detect.html'
   }
   
   // Add more tools below:
